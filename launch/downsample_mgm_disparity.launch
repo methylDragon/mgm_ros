@@ -1,0 +1,74 @@
+<launch>
+<!-- Note: No nested group namespaces are used since they're incompatible with the image_pipeline's nodelets -->
+  <arg name="param_file" default="disparity_config.yaml" />
+
+  <group ns="ovc">
+    <node pkg="nodelet" type="nodelet" name="disparity_manager"  args="manager"/>
+    <node pkg="nodelet" type="nodelet" name="point_manager"  args="manager"/>
+
+    <!-- Left Nodelets -->
+    <node pkg="nodelet" type="nodelet" name="L_downsample" args="load image_proc/resize disparity_manager" output="screen">
+      <remap from="image" to="left/image_raw"/>
+      <remap from="camera_info" to="left/camera_info"/>
+      <remap from="~image" to="left/downsampled/image"/>
+      <remap from="~camera_info" to="left/downsampled/camera_info"/>
+
+      <param name="use_scale" value="true"/>
+      <param name="scale_height" value="0.25"/>
+      <param name="scale_width" value="0.25"/>
+    </node>
+
+    <node pkg="nodelet" type="nodelet" name="L_downsampled_rectify" args="load image_proc/rectify disparity_manager" output="screen">
+      <remap from="image_mono" to="left/downsampled/image"/>
+      <remap from="camera_info" to="left/downsampled/camera_info"/>
+      <remap from="image_rect" to="left/downsampled/image_rect"/>
+    </node>
+
+    <!-- Right Nodelets -->
+    <node pkg="nodelet" type="nodelet" name="R_downsample" args="load image_proc/resize disparity_manager" output="screen">
+      <remap from="image" to="right/image_raw"/>
+      <remap from="camera_info" to="right/camera_info"/>
+      <remap from="~image" to="right/downsampled/image"/>
+      <remap from="~camera_info" to="right/downsampled/camera_info"/>
+
+      <param name="use_scale" value="true"/>
+      <param name="scale_height" value="0.25"/>
+      <param name="scale_width" value="0.25"/>
+    </node>
+
+    <node pkg="nodelet" type="nodelet" name="R_downsampled_rectify" args="load image_proc/rectify disparity_manager" output="screen">
+      <remap from="image_mono" to="right/downsampled/image"/>
+      <remap from="camera_info" to="right/downsampled/camera_info"/>
+      <remap from="image_rect" to="right/downsampled/image_rect"/>
+    </node>
+
+    <!-- DISPARITY TIME! -->
+    <node pkg="nodelet" type="nodelet" name="downsampled_disparity_mgm" args="load mgm_ros/mgm point_manager" output="screen">
+      <remap from="left/image_rect" to="left/downsampled/image_rect"/>
+      <remap from="right/image_rect" to="right/downsampled/image_rect"/>
+      <remap from="left/camera_info" to="left/downsampled/camera_info"/>
+      <remap from="right/camera_info" to="right/downsampled/camera_info"/>
+
+      <remap from="disparity" to="downsampled/disparity"/>
+    </node>
+
+    <!-- POINTCLOUD2 TIME! -->
+    <node pkg="nodelet" type="nodelet" name="downsampled_disparity_points" args="load stereo_image_proc/point_cloud2 point_manager" output="screen">
+      <remap from="left/image_rect_color" to="left/downsampled/image_rect"/>
+      <remap from="left/camera_info" to="left/downsampled/camera_info"/>
+      <remap from="right/camera_info" to="right/downsampled/camera_info"/>
+      <remap from="disparity" to="downsampled/disparity"/>
+
+      <remap from="points2" to="downsampled/points"/>
+
+      <param name="approximate_sync" value="True"/>
+      <rosparam command="load" file="$(find openvision_cam)/param/$(arg param_file)"/>
+    </node>
+
+    <!-- TF Publisher -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="camera_link_publisher" args="0 0 0 -1.57 0 -1.57 camera_link ovc_image_link" />
+
+    <!-- For OVC-Blue Demo -->
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_to_camera" args="-0.075 0.075 0.025 -3.14 0 -3.14 right_base_link camera_link" />
+  </group>
+</launch>

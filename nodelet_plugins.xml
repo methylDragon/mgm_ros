@@ -1,0 +1,5 @@
+<library path="lib/libmgm_ros">
+  <class name="mgm_ros/mgm" type="mgm_ros::MGMProcessor" base_class_type="nodelet::Nodelet">
+    <description>Nodelet for disparity stereomatching with the More Global Matching algorithm.</description>
+  </class>
+</library>
