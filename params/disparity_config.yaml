@@ -1,0 +1,39 @@
+# Check the dynamic reconfigure config definitions in /cfg for descriptions!
+
+# ROS relevant
+queue_size: 5.0
+approximate_sync: true
+swap_lr: true
+publish_rate: 30.0
+
+# Multiscale
+scales: 3
+use_multiscale: false
+
+# Disparity params
+P1: 8
+P2: 32
+min_disparity: 0
+max_disparity: 80
+num_directions: 4
+P1_mul: 1.0
+P2_mul: 1.0
+mul_thresh: 5
+trunc_dist: 64.0
+distance_function: census
+prefilter_function: none
+subpixel_refinement: none
+
+# Smart parameters
+CENSUS_NCC_WIN: 5
+TESTLRRL: true
+REMOVESMALLCC: 188
+MINDIFF: -1
+TSGM: 4
+TSGM_ITER: 1
+TSGM_FIX_OVERCOUNT: true
+TSGM_DEBUG: false
+TSGM_2LMIN: false
+SUBPIX: 1.0
+USE_TRUNCATED_LINEAR_POTENTIALS: false
+MEDIAN: false
