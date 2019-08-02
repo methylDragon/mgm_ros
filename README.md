@@ -2,7 +2,7 @@
 
 Author: methylDragon
 
-ROS Nodelet package for doing disparity stereo-matching with the More Global Matching (MGM) algorithm!
+ROS Nodelet package for doing disparity stereo-matching with the [More Global Matching (MGM) algorithm](<http://dev.ipol.im/~facciolo/mgm/>)!
 
 
 
