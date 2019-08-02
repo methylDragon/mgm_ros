@@ -131,6 +131,16 @@ Because of this, the MGM demo runs at a much slower rate, and sometimes might no
 
 Additionally, due to this issue, it is important to ensure that the MGM disparity nodelet (and possibly the disparity to point cloud conversion nodelet) are running in **separate processes**. Otherwise there might be issues with topic subscriptions.
 
+It is also because of this limitation that I suspect the MGM algorithm cannot be pushed to its utmost maximum to produce fuller, more comprehensive disparity images to surpass the performance of SGBM.
+
+
+
+Unrelated caveat:
+
+Publish rate is not implemented even though it is exposed as a parameter.
+
+
+
 **Pull requests and improvements will be greatly appreciated with regards to these!**
 
 - For ROS improvements, kindly **send a PR to this repo**.
